@@ -1,6 +1,8 @@
 package models
 
-import "alura-loja-go/db"
+import (
+	"alura-loja-go/db"
+)
 
 type Product struct {
 	Id          int
@@ -45,4 +47,22 @@ func FindAllProducts() []Product {
 	defer db.Close()
 
 	return products
+}
+
+func CreateProduct(name, description string, price float64, quantity int) {
+	db := db.ConnectDb()
+
+	insertDataOnDb, err := db.Prepare("INSERT INTO products(name, description, price, quantity) VALUES($1, $2, $3, $4)")
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	_, err = insertDataOnDb.Exec(name, description, price, quantity)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer db.Close()
 }
